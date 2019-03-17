@@ -11,7 +11,6 @@ SKIMDB_URL = 'https://skimdb.npmjs.com/registry/_design/app/_list/index/modified
 REGISTRY_URL = 'https://registry.npmjs.org/'
 
 def extract(updated, package_name, package_version, file_path):
-    
     dest = os.path.join('packages', updated, '{}-{}'.format(package_name, package_version))
     tar = tarfile.open(file_path)
     tar.extractall(dest)
@@ -51,7 +50,7 @@ def scan():
     updated = str(data['_updated'])
 
 if __name__ == '__main__':
-    schedule.every().seconds.do(scan)
+    schedule.every(10).seconds.do(scan)
 
     while True:
         schedule.run_pending()
