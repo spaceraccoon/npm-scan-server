@@ -5,6 +5,11 @@ import requests
 import tarfile
 import time
 import subprocess
+import argparse
+
+parser = argparse.ArgumentParser(description='npm-scan on a server.', prog='npm-scan-server')
+parser.add_argument('-l', '--log', help='Log scans', default=False, action='store_true')
+args = parser.parse_args()
 
 updated = str(int(time.time() * 1000))
 SKIMDB_URL = 'https://skimdb.npmjs.com/registry/_design/app/_list/index/modified'
@@ -46,6 +51,11 @@ def scan():
             os.mkdir('output')
         subprocess.run(['node', 'npm-scan/bin/scan', '-p', os.path.join('packages', updated), '-o', os.path.join('output', '{}.json'.format(updated))])
         shutil.rmtree(os.path.join('packages', updated))
+
+        if args.log:
+            for key, value in data.items():
+                if key != '_updated':
+                    open('log.txt', 'a+').write('{}@{}\n'.format(key, value['dist-tags']['latest']))
 
     updated = str(data['_updated'])
 
